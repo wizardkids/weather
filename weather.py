@@ -21,6 +21,7 @@ RESOURCES:
 
 
 import atexit
+import configparser
 import json
 import os
 import warnings
@@ -36,8 +37,10 @@ from rich import print
 
 warnings.filterwarnings('ignore', category=FutureWarning)
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+API_KEY: str = config['DEFAULT']['API_KEY']
 
-API_KEY = "95ce891b736e7a0fbf042ba2400f697d"
 
 VERSION = "0.1"
 
