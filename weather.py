@@ -31,7 +31,7 @@ import click
 import pandas as pd
 import rdatetime as rd
 import requests
-from icecream import ic
+# from icecream import ic
 from meteostat import Daily, Hourly, Monthly, Normals, Point, Stations
 from rich import print
 
