@@ -5,7 +5,7 @@ This Python script is a command-line interface (CLI) tool that retrieves weather
 ## Prerequisites
 Before running this script, you need an API key from OpenWeatherMap. You can sign up for a free account at [https://openweathermap.org/api](https://openweathermap.org/api).
 
-Edit the config.ini file, inserting your API key in the obvious location.
+Edit the config.ini file, inserting your API key in the obvious location. The config.ini file also holds default locations/coords.
 
 ## Help
 
