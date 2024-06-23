@@ -2,14 +2,22 @@
 
 This Python script is a command-line interface (CLI) tool that retrieves weather information for a specified location. It uses the [OpenWeatherMap API](https://openweathermap.org/api) to fetch current and forecasted weather data and the [meteostat library](https://dev.meteostat.net/python/) for time series (historical) weather data.
 
-The weather app provides extensive information, requiring that the CLI be somewhat robust. A manual provides complete information for each option, arguments, and commands.
-
-`python weather.py manual`
-
 ## Prerequisites
 Before running this script, you need an API key from OpenWeatherMap. You can sign up for a free account at [https://openweathermap.org/api](https://openweathermap.org/api).
 
 Edit the config.ini file, inserting your API key in the obvious location.
+
+## Help
+
+The weather app provides extensive information, requiring that the CLI be somewhat robust. A manual provides complete information for each option, arguments, and commands.
+
+`python weather.py manual`
+
+CLI help is available for the main app as well as many commands. For example:
+
+`python weather.py --help`</br>
+`python weather.py location --help`</br>
+`python weather.py daily-summary --help`
 
 ## Usage
 ```
