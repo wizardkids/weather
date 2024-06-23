@@ -31,6 +31,7 @@ Usage: weather.py [OPTIONS] COMMAND [ARGS]...
 
   Further, every command has similar defaults, as needed.
   See <command> --help for each command for details.
+  Example: python weather.py location --help
 
   Commands organized by period:
 
