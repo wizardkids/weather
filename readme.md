@@ -100,7 +100,7 @@ Commands:
 
 ## Notes
 - Default coordinates (latitude and longitude) and location (city and state)</br>
-are hard-coded but can be changed by editing `weather.py` beginning at line 47
+are kept in the config.ini file.
 - All weather data is limited to the United States only. International weather</br>is not available.
 
 ## Dependencies
