@@ -83,6 +83,8 @@ Commands:
 ## Example Usage
 `python weather.py` --> forecast for today and tomorrow, with any alerts
 
+`python weather.py coords -d 4 -p forecast` --> 4 day forecast
+
 `python weather.py hourly-forecast -h 12` --> hourly forecast for next 12h
 
 `python weather.py coords -p current` --> current weather at default lat/long
