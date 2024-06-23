@@ -1203,7 +1203,9 @@ def download_data(latitude, longitude, filter_times) -> dict:
         exit()
 
     data = r.json()
-    save_data(data)
+
+    # ! I don't tkink there's any good reason to save these data.
+    # save_data(data)
 
     return data
 
