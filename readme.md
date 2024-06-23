@@ -84,7 +84,7 @@ Commands:
 
 `python weather.py meteostat stations` --> 5 closest weather stations
 
-`python weather.py meteostat meteostat hourly 2024-06-15 2024-06-16` --> hourly data between two dates
+`python weather.py meteostat hourly 2024-06-15 2024-06-16` --> hourly data between two dates
 
 ## Notes
 - Default coordinates (latitude and longitude) and location (city and state) are hard-coded but can be changed by editing `weather.py` beginning at line 47
