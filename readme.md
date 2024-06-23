@@ -1,53 +1,98 @@
 # Weather CLI
 
-This Python script is a command-line interface (CLI) tool that allows you to retrieve current weather information for a specified location. It uses the OpenWeatherMap API to fetch weather data and displays it in a user-friendly format.
+This Python script is a command-line interface (CLI) tool that retrieves weather information for a specified location. It uses the [OpenWeatherMap API](https://openweathermap.org/api) to fetch current and forecasted weather data and the [meteostat library](https://dev.meteostat.net/python/) for time series (historical) weather data.
+
+The weather app provides extensive information, requiring that the CLI be somewhat robust. A manual provides complete information for each option, arguments, and commands.
+
+`python weather.py manual`
 
 ## Prerequisites
+Before running this script, you need an API key from OpenWeatherMap. You can sign up for a free account at [https://openweathermap.org/api](https://openweathermap.org/api).
 
-Before running this script, you need to have the following:
-
-- Python 3.x installed on your system
-- An API key from OpenWeatherMap (you can sign up for a free account at https://openweathermap.org/api)
-
-## Installation
-
-1. Clone or download this repository to your local machine.
-2. Navigate to the `python cli/weather` directory.
-3. Install the required Python packages by running the following command:
-
-pip install -r requirements.txt
+Edit the config.ini file, inserting your API key in the obvious location.
 
 ## Usage
+```
+Usage: weather.py [OPTIONS] COMMAND [ARGS]...
 
-To use the Weather CLI, run the following command:
+  Display weather reports or alerts for location (city/state) or coords
+  (latitude/longitude). This weather app is replete with defaults. Executing the app with no arguments is the same as:
 
-python weather.py [OPTIONS] [LOCATION]
+  coords -p forecast -lat (default lat) -lon (default lon)
 
+  Further, every command has similar defaults, as needed.
+  See <command> --help for each command for details.
 
-Replace `[LOCATION]` with the name of the city or the ZIP code for which you want to retrieve weather information.
+  Commands organized by period:
 
-### Options
+  Today's current or forecasted weather
+      location        Current or forecasted weather
+      coords          Current or forecasted weather
+      alerts          Currently issued weather alerts
 
-- `--units` (default: `metric`): Specify the units for temperature. Accepted values are `metric` (Celsius) or `imperial` (Fahrenheit).
-- `--api-key`: Provide your OpenWeatherMap API key. If not specified, the script will look for the `OWM_API_KEY` environment variable.
+  Detailed weather
+      hourly-forecast Hourly forecast for up to 48 hours
+      rain-forecast   Rain for next hour
 
-### Examples
+  Weather summaries
+      daily-summary   Mean or total values on the provided [DATE]
+      meteostat
+          single-day  Data for a specific day and time
+          daily       Data in daily increments
+          hourly      Data  in hourly increments
+          monthly     Data  in monthly increments
+          summary     summary statistics for variables between two dates
+          normals     Normal weather data for 30-year period
+          stations    Five meteorological stations nearest to a location
 
-- Get the current weather for New York City:
+  manual              Access this user manual
 
-python weather.py "New York City"
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
 
+Commands:
+  alerts           Currently issued weather alerts.
+  coords           Current or forecasted weather.
+  daily-summary    Report mean or total values for the provided [DATE].
+  hourly-forecast  Forecast for the provided location, hourly.
+  location         Current or forecasted weather.
+  manual           Access information for specific commands.
+  meteostat        Report bulk meteorological data for a variety of periods.
+  rain-forecast    Rain for next hour in 5-min intervals.
 
-- Get the current weather for ZIP code 90001 in Fahrenheit units:
+  Except "meteostat", using commands without arguments retrieves weather data
+  for "today" at lat/lon =[38.95669, -77.41006] or city/state = [Herndon,
+  Virginia]. These commands aim to provide weather information for the
+  immediate time period.
 
-python weather.py --units imperial 90001
+  "meteostat" exposes 6 subcommands for accessing ranges of weather data in
+  bulk, from a single day/time to one-day-a-month over 30 years. Bulk data are
+  saved to file for analysis by other programs.
+```
 
+## Example Usage
+`python weather.py` --> forecast for today and tomorrow, with any alerts
 
-- Use your OpenWeatherMap API key:
+`python weather.py hourly-forecast -h 12` --> hourly forecast for next 12h
 
-python weather.py --api-key YOUR_API_KEY_HERE "London"
+`python weather.py coords -p current` --> current weather at default lat/long
 
+`python weather.py location -p forecast -c Alexandria -s Virginia` --> forecast for the specified location
 
-## Acknowledgments
+`python weather.py meteostat --help` --> help for meteostat subcommands
 
-This project uses the [OpenWeatherMap API](https://openweathermap.org/api) to retrieve weather data.
+`python weather.py meteostat stations` --> 5 closest weather stations
+
+`python weather.py meteostat meteostat hourly 2024-06-15 2024-06-16` --> hourly data between two dates
+
+## Notes
+- Default coordinates (latitude and longitude) and location (city and state) are hard-coded but can be changed by editing `weather.py` beginning at line 47
+- All weather data is limited to the United States only. International weather is not available.
+
+## Dependencies
+- [click](https://click.palletsprojects.com/en/8.1.x/) (for command-line interface)
+- [pandas](https://pandas.pydata.org/docs/index.html)
+- [requests](https://requests.readthedocs.io/en/latest/)
+- [meteostat](https://dev.meteostat.net/python/)
+- [rich](https://rich.readthedocs.io/en/latest/)
