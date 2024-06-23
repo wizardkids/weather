@@ -16,7 +16,8 @@ Edit the config.ini file, inserting your API key in the obvious location.
 Usage: weather.py [OPTIONS] COMMAND [ARGS]...
 
   Display weather reports or alerts for location (city/state) or coords
-  (latitude/longitude). This weather app is replete with defaults. Executing the app with no arguments is the same as:
+  (latitude/longitude). This weather app is replete with defaults. Executing
+  the app with no arguments is the same as:
 
   coords -p forecast -lat (default lat) -lon (default lon)
 
@@ -67,8 +68,8 @@ Commands:
   immediate time period.
 
   "meteostat" exposes 6 subcommands for accessing ranges of weather data in
-  bulk, from a single day/time to one-day-a-month over 30 years. Bulk data are
-  saved to file for analysis by other programs.
+  bulk, from a single day/time to one-day-a-month over 30 years. Bulk data
+  are saved to file for analysis by other programs.
 ```
 
 ## Example Usage
@@ -78,17 +79,18 @@ Commands:
 
 `python weather.py coords -p current` --> current weather at default lat/long
 
-`python weather.py location -p forecast -c Alexandria -s Virginia` --> forecast for the specified location
+`python weather.py location -p forecast -c Alexandria -s Virginia` --> forecast</br> for the specified location
 
 `python weather.py meteostat --help` --> help for meteostat subcommands
 
 `python weather.py meteostat stations` --> 5 closest weather stations
 
-`python weather.py meteostat hourly 2024-06-15 2024-06-16` --> hourly data between two dates
+`python weather.py meteostat hourly 2024-06-15 2024-06-16` --> hourly data</br>between two dates
 
 ## Notes
-- Default coordinates (latitude and longitude) and location (city and state) are hard-coded but can be changed by editing `weather.py` beginning at line 47
-- All weather data is limited to the United States only. International weather is not available.
+- Default coordinates (latitude and longitude) and location (city and state)</br>
+are hard-coded but can be changed by editing `weather.py` beginning at line 47
+- All weather data is limited to the United States only. International weather</br>is not available.
 
 ## Dependencies
 - [click](https://click.palletsprojects.com/en/8.1.x/) (for command-line interface)
