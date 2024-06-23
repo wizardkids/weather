@@ -40,14 +40,14 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 config = configparser.ConfigParser()
 config.read('config.ini')
 API_KEY: str = config['DEFAULT']['API_KEY']
+DEFAULT_LAT: str = config['DEFAULT']['DEFAULT_LAT']
+DEFAULT_LON: str = config['DEFAULT']['DEFAULT_LON']
+DEFAULT_CITY: str = config['DEFAULT']['DEFAULT_CITY']
+DEFAULT_STATE: str = config['DEFAULT']['DEFAULT_STATE']
 
 
 VERSION = "0.1"
 
-DEFAULT_LAT: str = "38.95669"
-DEFAULT_LON: str = "-77.41006"
-DEFAULT_CITY: str = "Herndon"
-DEFAULT_STATE: str = "Virginia"
 
 # Create a naive date string for today's date in YYYY-MM-DD format.
 todaydatetime: rd.datetime = rd.datetime.now()
