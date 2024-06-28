@@ -1,6 +1,6 @@
 """
     Filename: meteostat_lib.py
-     Version: 0.1
+     Version: 1.0
       Author: Richard E. Rawson
         Date: 2024-06-28
  Description: Functions related to the Meteostat API.
@@ -12,7 +12,7 @@ import click
 import pandas as pd
 import rdatetime as rd
 from icecream import ic
-from meteostat import Daily, Hourly, Monthly, Normals, Point, Stations
+from meteostat import Daily, Hourly, Monthly, Normals, Point
 from rich import print
 import utils
 
@@ -125,7 +125,7 @@ def single_day(ctx, latitude, longitude, city, state, date) -> None:
     date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow = utils.extract_single_day_weather_vars(data)
 
     # Print the final report.
-    utils.print_single_day(city, state, latitude, longitude, date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow, alerts)
+    utils.print_single_day(city, state, latitude, longitude, date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow)
 
     return None
 

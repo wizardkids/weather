@@ -1,6 +1,6 @@
 """
     Filename: weather.py
-     Version: 0.1
+     Version: 1.0
       Author: Richard E. Rawson
         Date: 2024-03-08
  Description: Print weather reports to the terminal.
@@ -25,26 +25,19 @@ RESOURCES:
     ! Dates can be entered by user as timezone-unaware dates, but within code, dates are almost always UTC, except where printed to the terminal where the UTC date is converted to the local time zone.
 """
 
-# import atexit
 import configparser
 import json
-# import os
 import warnings
 
 import click
 import meteostat_lib
-# import pandas as pd
-# import r_utils
 import rdatetime as rd
 import requests
 import utils
 from icecream import ic
-# from meteostat import Daily, Hourly, Monthly, Normals, Point, Stations
 from meteostat_lib import (daily, hourly, monthly, normals, single_day,
                            stations, summary)
 from rich import print
-
-# from random import randint
 
 
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -58,7 +51,7 @@ DEFAULT_CITY: str = config['DEFAULT']['DEFAULT_CITY']
 DEFAULT_STATE: str = config['DEFAULT']['DEFAULT_STATE']
 
 
-VERSION = "0.1"
+VERSION = "1.0"
 
 
 # Create a naive date string for today's date in YYYY-MM-DD format.

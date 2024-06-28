@@ -1,6 +1,6 @@
 """
     Filename: utils.py
-     Version: 0.1
+     Version: 1.0
       Author: Richard E. Rawson
         Date: 2024-06-28
  Description: Utility functions for weather.py
@@ -810,7 +810,7 @@ def print_alerts(city, state, data) -> None:
         print(f'{alert["description"]}\n')
 
 
-def print_single_day(city, state, latitude, longitude, date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow, alerts) -> None:
+def print_single_day(city, state, latitude, longitude, date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow) -> None:
     """
     Print the current weather report.
 
