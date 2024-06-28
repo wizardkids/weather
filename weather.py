@@ -6,7 +6,7 @@
  Description: Print weather reports to the terminal.
 
 ~CUSTOMIZATION:
-Customizing defaults requires editing this source code simply be changing DEFAULT values starting at line 47.
+Customizing defaults is done by editing the config.ini file.
 
 RESOURCES:
     https://openweathermap.org/api
