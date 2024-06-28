@@ -19,6 +19,13 @@ RESOURCES:
     ! Dates can be entered by user as timezone-unaware dates, but within code, dates are almost always UTC, except where printed to the terminal where the UTC date is converted to the local time zone.
 """
 
+# ======================================================================
+
+# ! MY GOAL HERE IS TO SPLIT OUT METEOSTAT FROM THE REST OF THE PROGRAM
+# ! Naming is important since meteostat exists as a downloaded module!
+
+# ======================================================================
+
 
 import atexit
 import configparser
@@ -29,9 +36,10 @@ from random import randint
 
 import click
 import pandas as pd
+import r_utils
 import rdatetime as rd
 import requests
-# from icecream import ic
+from icecream import ic
 from meteostat import Daily, Hourly, Monthly, Normals, Point, Stations
 from rich import print
 
@@ -125,18 +133,18 @@ def cli(ctx) -> None:
 @click.pass_context
 def location(ctx, period, city, state, days) -> None:
     """
-Current or forecasted weather. This command takes city/state as arguments, not lat/lon.
+    Current or forecasted weather. This command takes city/state as arguments, not lat/lon.
 
-EXAMPLE USAGE:
+    EXAMPLE USAGE:
 
-\b
+    \b
     location --> forecast weather for default location
 
     location -p forecast --city Ithaca --state "New York" --> 8-day forecast for Ithaca
 
-EXAMPLE DATA: location -p forecast -c Alexandria -s Virginia
+    EXAMPLE DATA: location -p forecast -c Alexandria -s Virginia
 
-\b
+    \b
     FORECAST for Alexandria, Virginia
     Today: Tuesday, March 26:
     There will be partly cloudy today.
@@ -173,34 +181,34 @@ EXAMPLE DATA: location -p forecast -c Alexandria -s Virginia
 @click.pass_context
 def coords(ctx, period, latitude, longitude, days) -> None:
     """
-Current or forecasted weather. This command latitude/longitude as arguments, not city/state.
+    Current or forecasted weather. This command latitude/longitude as arguments, not city/state.
 
-EXAMPLE USAGE:
+    EXAMPLE USAGE:
 
-\b
-    coords --> forecast weather for default latitude and longitude
+        \b
+        coords --> forecast weather for default latitude and longitude
 
-    coords -p forecast -lat 42.4372 -lon -76.5484 --> 8-day forecast for this latitude/longitude
+        coords -p forecast -lat 42.4372 -lon -76.5484 --> 8-day forecast for this latitude/longitude
 
-EXAMPLE DATA: coords -p current -lat 38.9695316 -lon -77.3859479
+    EXAMPLE DATA: coords -p current -lat 38.9695316 -lon -77.3859479
 
-\b
-    CURRENT WEATHER for
-    Tuesday, March 26, 2024, 11:07 AM
-    Herndon, Virginia: 38.9695316, -77.3859479
-            weather: broken clouds
-        temperature: 47.5 °F
-            feels like: 46.8 °F
-            dew point: 31.7 °F
-            humidity: 54%
-            pressure: 575.5 mmHg / 22.7 ins
-            UV index: 1.6 -- low
-            visibility: 6.2 miles
-        wind direction: north
-            wind speed: 3.0 mph
-                gust: 3.0
-            sunrise: 07:02 AM
-                sunset: 07:27 PM
+        \b
+        CURRENT WEATHER for
+        Tuesday, March 26, 2024, 11:07 AM
+        Herndon, Virginia: 38.9695316, -77.3859479
+                weather: broken clouds
+            temperature: 47.5 °F
+                feels like: 46.8 °F
+                dew point: 31.7 °F
+                humidity: 54%
+                pressure: 575.5 mmHg / 22.7 ins
+                UV index: 1.6 -- low
+                visibility: 6.2 miles
+            wind direction: north
+                wind speed: 3.0 mph
+                    gust: 3.0
+                sunrise: 07:02 AM
+                    sunset: 07:27 PM
 
     \f
     Parameters
@@ -226,26 +234,26 @@ EXAMPLE DATA: coords -p current -lat 38.9695316 -lon -77.3859479
 @click.pass_context
 def hourly_forecast(ctx, latitude, longitude, city, state, hours) -> None:
     """
-Forecast for the provided location, hourly.
+    Forecast for the provided location, hourly.
 
-EXAMPLE USAGE:
+    EXAMPLE USAGE:
 
-\b
-    hourly-forecast -> next 8 hours forecast for default location
+    \b
+        hourly-forecast -> next 8 hours forecast for default location
 
-    hourly-forecast --latitude (default lat) --longitude (default lon) --hours 8
+        hourly-forecast --latitude (default lat) --longitude (default lon) --hours 8
 
-EXAMPLE DATA: hourly-forecast -h 2
+    EXAMPLE DATA: hourly-forecast -h 2
 
-\b
-Hourly forecast for McNair, Virginia
-Tuesday, Mar 26, 2024
-           11:00 AM                      12:00 PM
-        broken clouds                 broken clouds
-     Temperature: 48 °F            Temperature: 48 °F
-            rain: 0.00 in.                rain: 0.00 in.
-             UVI: 1.6                      UVI: 2.82
-  Chance of rain: 0 %           Chance of rain: 0 %
+    \b
+    Hourly forecast for McNair, Virginia
+    Tuesday, Mar 26, 2024
+            11:00 AM                      12:00 PM
+            broken clouds                 broken clouds
+        Temperature: 48 °F            Temperature: 48 °F
+                rain: 0.00 in.                rain: 0.00 in.
+                UVI: 1.6                      UVI: 2.82
+    Chance of rain: 0 %           Chance of rain: 0 %
     """
 
     # If user entered city/state, convert to latitude/longitude first.
@@ -270,23 +278,23 @@ Tuesday, Mar 26, 2024
 @click.pass_context
 def rain_forecast(ctx, latitude, longitude, city, state) -> None:
     """
-Rain for next hour in 5-min intervals.
+    Rain for next hour in 5-min intervals.
 
-EXAMPLE USAGE:
+    EXAMPLE USAGE:
 
-    \b
-    rain-forecast --> forecast for default location for the next hour
-    rain_forecast --latitude (default lat) --longitude (default lon)
+        \b
+        rain-forecast --> forecast for default location for the next hour
+        rain_forecast --latitude (default lat) --longitude (default lon)
 
-EXAMPLE DATA: rain-forecast (no arguments)
+    EXAMPLE DATA: rain-forecast (no arguments)
 
-    \b
-    Expected rainfall in the next hour
-    2024-03-26 -- McNair, Virginia
-    11:14: 0.00 in.
-    11:19: 0.00 in.
-    11:24: 0.00 in.
-    11:29: 0.00 in.
+        \b
+        Expected rainfall in the next hour
+        2024-03-26 -- McNair, Virginia
+        11:14: 0.00 in.
+        11:19: 0.00 in.
+        11:24: 0.00 in.
+        11:29: 0.00 in.
     """
 
     # If user entered city/state, convert to latitude/longitude first.
@@ -312,26 +320,26 @@ EXAMPLE DATA: rain-forecast (no arguments)
 @click.pass_context
 def alerts(ctx, latitude, longitude, city, state) -> None:
     """
-Currently issued weather alerts.
+    Currently issued weather alerts.
 
-EXAMPLE USAGE:
+    EXAMPLE USAGE:
 
-\b
-    alerts --> current alerts for the default location
+    \b
+        alerts --> current alerts for the default location
 
-EXAMPLE DATA: alerts (no arguments)
+    EXAMPLE DATA: alerts (no arguments)
 
-\b
-    ALERT from NWS Baltimore MD/Washington DC
-    for McNair, Virginia
-    starts: Tuesday, 07:00 PM
-    end: Wednesday, 03:00 PM
+    \b
+        ALERT from NWS Baltimore MD/Washington DC
+        for McNair, Virginia
+        starts: Tuesday, 07:00 PM
+        end: Wednesday, 03:00 PM
 
-    Coastal Flood Advisory
-    * WHAT...Up to one half foot of inundation above ground level expected in low lying areas due to tidal flooding.
+        Coastal Flood Advisory
+        * WHAT...Up to one half foot of inundation above ground level expected in low lying areas due to tidal flooding.
 
-    * WHERE...Fairfax, Stafford and Southeast Prince William Counties.
-    ...
+        * WHERE...Fairfax, Stafford and Southeast Prince William Counties.
+        ...
     """
 
     # If user entered city/state, convert to latitude/longitude first.
@@ -370,27 +378,27 @@ EXAMPLE DATA: alerts (no arguments)
 @click.pass_context
 def daily_summary(ctx, latitude, longitude, city, state, date) -> None:
     """
-Report mean or total values for the provided [DATE]. The default [DATE] is today.
+    Report mean or total values for the provided [DATE]. The default [DATE] is today.
 
-EXAMPLE USAGE:
+    EXAMPLE USAGE:
 
-    daily-summary -c Herndon -s Virginia 2023-03-20
+        daily-summary -c Herndon -s Virginia 2023-03-20
 
 
 
-EXAMPLE DATA: daily-summary 2023-03-20
+    EXAMPLE DATA: daily-summary 2023-03-20
 
-\b
-    DAILY SUMMARY OF WEATHER for 2023-03-20
-    McNair, Virginia: 38.95669, -77.41006
-        temperature: 28.1 °F
-    min temperature: 25.4 °F
-    max temperature: 50.5 °F
-        humidity: 52%
-    precipitation: 0.00 in.
-        pressure: 769.6 mmHg
-        cloud cover: 0%
-    max wind speed: 24 mph
+    \b
+        DAILY SUMMARY OF WEATHER for 2023-03-20
+        McNair, Virginia: 38.95669, -77.41006
+            temperature: 28.1 °F
+        min temperature: 25.4 °F
+        max temperature: 50.5 °F
+            humidity: 52%
+        precipitation: 0.00 in.
+            pressure: 769.6 mmHg
+            cloud cover: 0%
+        max wind speed: 24 mph
     wind direction: west
     \f
     Parameters
@@ -448,16 +456,16 @@ summary
 @click.pass_context
 def meteostat(ctx) -> None:
     """
-Report bulk meteorological data for a variety of periods. Latitude and longitude default to Dulles International Airport. Data are saved in \"USERPROFILE\\downloads\\weather_data.csv\" after each report is run.
+    Report bulk meteorological data for a variety of periods. Latitude and longitude default to Dulles International Airport. Data are saved in \"USERPROFILE\\downloads\\weather_data.csv\" after each report is run.
 
-    \b
-  single-day: Data for a specific day and time (default time: 12:00pm)
-       daily: Data are reported in daily increments.
-      hourly: Data are reported in hourly increments.
-     monthly: Data are reported in monthly increments.
-     summary: count, mean, std dev, min, and max values for weather variable between provided dates.
-     normals: Normal weather data for 30-year period reported as average values for each of 12 months.
-    stations: List five meteorological stations nearest to the provided latitude/longitude.
+        \b
+    single-day: Data for a specific day and time (default time: 12:00pm)
+        daily: Data are reported in daily increments.
+        hourly: Data are reported in hourly increments.
+        monthly: Data are reported in monthly increments.
+        summary: count, mean, std dev, min, and max values for weather variable between provided dates.
+        normals: Normal weather data for 30-year period reported as average values for each of 12 months.
+        stations: List five meteorological stations nearest to the provided latitude/longitude.
     \f
     Parameters
     ----------
@@ -483,26 +491,26 @@ Report bulk meteorological data for a variety of periods. Latitude and longitude
 @click.pass_context
 def single_day(ctx, latitude, longitude, city, state, date) -> None:
     """
-Report weather for the provided [DATE]. [DATE] must be on or after Jan 1, 1979 and up to 4 days from today's date. See epilog for formatting [DATE].
+    Report weather for the provided [DATE]. [DATE] must be on or after Jan 1, 1979 and up to 4 days from today's date. See epilog for formatting [DATE].
 
-Example data: meteostat single-day 2023-03-01
+    Example data: meteostat single-day 2023-03-01
 
-\b
-    WEATHER for Wednesday, March 01, 2023, 07:00 AM
-    McNair, Virginia: 38.95669, -77.41006
-            weather: few clouds
-        temperature: 33.7 °F
-            feels like: 33.7 °F
-            dew point: 28.4 °F
-            humidity: 79%
-            pressure: 573.8 mmHg / 22.6 ins
-            UV index: 0.0 -- low
-            visibility: 6.2 miles
-        wind direction: north
-            wind speed: 0.0 mph
-                gust: 0.0
-            sunrise: 06:42 AM
-                sunset: 06:01 PM
+    \b
+        WEATHER for Wednesday, March 01, 2023, 07:00 AM
+        McNair, Virginia: 38.95669, -77.41006
+                weather: few clouds
+            temperature: 33.7 °F
+                feels like: 33.7 °F
+                dew point: 28.4 °F
+                humidity: 79%
+                pressure: 573.8 mmHg / 22.6 ins
+                UV index: 0.0 -- low
+                visibility: 6.2 miles
+            wind direction: north
+                wind speed: 0.0 mph
+                    gust: 0.0
+                sunrise: 06:42 AM
+                    sunset: 06:01 PM
     \f
     Parameters
     ----------
@@ -557,18 +565,18 @@ Example data: meteostat single-day 2023-03-01
 @click.pass_context
 def daily(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     """
-Report means or totals for each day between two dates. Default dates: 1960-01-01 to today.
+    Report means or totals for each day between two dates. Default dates: 1960-01-01 to today.
 
-\b
-EXAMPLE DATA: meteostat daily 2023-03-01 2023-03-03
+    \b
+    EXAMPLE DATA: meteostat daily 2023-03-01 2023-03-03
 
-\b
-            Avg temp  Min temp  Max temp  Rain  Snow  Wind Dir  Wind Spd  Pressure
-time
-2023-03-01      44.2      27.9      59.7  0.00   0.0     163.0       7.0     761.9
-2023-03-02      52.7      40.6      63.7  0.01   0.0     328.0       7.0     755.5
-2023-03-03      41.9      36.7      45.7  0.56   0.0      62.0       7.0     758.1
-...
+    \b
+                Avg temp  Min temp  Max temp  Rain  Snow  Wind Dir  Wind Spd  Pressure
+    time
+    2023-03-01      44.2      27.9      59.7  0.00   0.0     163.0       7.0     761.9
+    2023-03-02      52.7      40.6      63.7  0.01   0.0     328.0       7.0     755.5
+    2023-03-03      41.9      36.7      45.7  0.56   0.0      62.0       7.0     758.1
+    ...
     \f
     Parameters
     ----------
@@ -647,23 +655,23 @@ time
 @click.pass_context
 def hourly(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     """
-Get weather data every hour between two dates/times. Default dates: 1973-01-01 to today. See CAUTION below.
+    Get weather data every hour between two dates/times. Default dates: 1973-01-01 to today. See CAUTION below.
 
-\b
-EXAMPLE DATA: meteostat hourly 2023-03-01 2023-03-03
+    \b
+    EXAMPLE DATA: meteostat hourly 2023-03-01 2023-03-03
 
-\b
-                     Temp  Dew Point  Humidity  Rain  Snow  Wind Dir  Wind Spd  Pressure
-time
-2023-03-01 00:00:00  50.0       35.8      58.0  0.00   NaN     340.0       6.0     761.4
-2023-03-01 01:00:00  48.9       35.2      59.0  0.00   NaN      30.0       7.0     762.0
-2023-03-01 02:00:00  48.9       35.2      59.0  0.00   NaN      30.0       7.0     762.0
-...
-2023-03-02 21:00:00  63.0       38.8      41.0  0.00   NaN     320.0      14.0     754.9
-2023-03-02 22:00:00  61.0       35.2      38.0  0.00   NaN     330.0      14.0     756.1
-2023-03-02 23:00:00  59.0       32.0      36.0  0.00   NaN     330.0      13.0     756.8
-2023-03-03 00:00:00  57.0       30.4      36.0  0.00   NaN     330.0       8.0     757.6
-...
+    \b
+                        Temp  Dew Point  Humidity  Rain  Snow  Wind Dir  Wind Spd  Pressure
+    time
+    2023-03-01 00:00:00  50.0       35.8      58.0  0.00   NaN     340.0       6.0     761.4
+    2023-03-01 01:00:00  48.9       35.2      59.0  0.00   NaN      30.0       7.0     762.0
+    2023-03-01 02:00:00  48.9       35.2      59.0  0.00   NaN      30.0       7.0     762.0
+    ...
+    2023-03-02 21:00:00  63.0       38.8      41.0  0.00   NaN     320.0      14.0     754.9
+    2023-03-02 22:00:00  61.0       35.2      38.0  0.00   NaN     330.0      14.0     756.1
+    2023-03-02 23:00:00  59.0       32.0      36.0  0.00   NaN     330.0      13.0     756.8
+    2023-03-03 00:00:00  57.0       30.4      36.0  0.00   NaN     330.0       8.0     757.6
+    ...
     \f
     Parameters
     ----------
@@ -764,35 +772,35 @@ time
 @click.pass_context
 def monthly(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     """
-Report first-of-the-month weather data between two dates. Default dates: 1960-01-01 to today
+    Report first-of-the-month weather data between two dates. Default dates: 1960-01-01 to today
 
-\b
-EXAMPLE DATA: meteostat monthly 2023-03-01 2023-06-01
+    \b
+    EXAMPLE DATA: meteostat monthly 2023-03-01 2023-06-01
 
-\b
-Fairfax County, Virginia
-Station: Dulles International Airport
-Weather data for 2023-03-01 to 2023-06-01
-Latitude: 38.9333, Longitude: -77.45
+    \b
+    Fairfax County, Virginia
+    Station: Dulles International Airport
+    Weather data for 2023-03-01 to 2023-06-01
+    Latitude: 38.9333, Longitude: -77.45
 
-\b
-            Mean Temp: 57.98 °F
-     Highest max Temp: 55.90 °F
-      Lowest min Temp: 55.00 °F
-        Mean Wind Spd: 8
-         Max Wind Spd: 9
-         Min Wind Spd: 6
-        Mean pressure: 761.10 in.
-Mean monthly rainfall: 2.16 in.
-       Total rainfall: 8.65 in.
+    \b
+                Mean Temp: 57.98 °F
+        Highest max Temp: 55.90 °F
+        Lowest min Temp: 55.00 °F
+            Mean Wind Spd: 8
+            Max Wind Spd: 9
+            Min Wind Spd: 6
+            Mean pressure: 761.10 in.
+    Mean monthly rainfall: 2.16 in.
+        Total rainfall: 8.65 in.
 
-\b
-            Avg Temp  Min Temp  Max Temp  Precipitation  Wind spd  Pressure
-time
-2023-03-01      44.2      33.3      55.0           1.57       9.0       NaN
-2023-04-01      58.1      43.3      70.3           3.30       8.0     762.1
-2023-05-01      60.3      47.3      72.3           1.48       6.0     762.8
-2023-06-01      69.3      55.9      80.6           2.30       7.0     758.4
+    \b
+                Avg Temp  Min Temp  Max Temp  Precipitation  Wind spd  Pressure
+    time
+    2023-03-01      44.2      33.3      55.0           1.57       9.0       NaN
+    2023-04-01      58.1      43.3      70.3           3.30       8.0     762.1
+    2023-05-01      60.3      47.3      72.3           1.48       6.0     762.8
+    2023-06-01      69.3      55.9      80.6           2.30       7.0     758.4
     \f
     Parameters
     ----------
@@ -868,22 +876,22 @@ time
 @click.pass_context
 def normals(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     """
-Normals at a given location calculated over 30 years. Default is 1991 to 2020.
+    Normals at a given location calculated over 30 years. Default is 1991 to 2020.
 
-\b
-Example data:
-       Avg Temp  Min temp  Max temp  Precip  Wind Spd  Pressure  Total Sun
-month
-1          -0.2      -5.2       4.7    74.5      12.6    1019.8        NaN
-2           1.2      -4.3       6.6    64.3      13.0    1018.4        NaN
-3           5.5      -0.5      11.5    89.0      13.8    1017.2        NaN
+    \b
+    Example data:
+        Avg Temp  Min temp  Max temp  Precip  Wind Spd  Pressure  Total Sun
+    month
+    1          -0.2      -5.2       4.7    74.5      12.6    1019.8        NaN
+    2           1.2      -4.3       6.6    64.3      13.0    1018.4        NaN
+    3           5.5      -0.5      11.5    89.0      13.8    1017.2        NaN
 
-\b
-Criteria for the date range:
-        1. Both start and end year are required.
-        2. end - start must equal 29.
-        3. end must be an even decade (e.g., 1990, 2020)
-        4. end must be earlier than the current year
+    \b
+    Criteria for the date range:
+            1. Both start and end year are required.
+            2. end - start must equal 29.
+            3. end must be an even decade (e.g., 1990, 2020)
+            4. end must be earlier than the current year
     \f
     Parameters
     ----------
@@ -935,21 +943,21 @@ Criteria for the date range:
 @click.pass_context
 def stations(ctx, latitude, longitude, city, state) -> None:
     """
-List stations nearby to the provided latitude and longitude. City/state, if used, are converted to lat/lon, which are then used for data gathering.
+    List stations nearby to the provided latitude and longitude. City/state, if used, are converted to lat/lon, which are then used for data gathering.
 
-\b
-Example data: meteostat stations -lat 38.9695316 -lon -77.3859479
-72403 Dulles International Airport: 38.9333, -77.45, 311.68 ft
-   distance: 0.18 miles
-     hourly: 1973-01-01 - 2024-03-22
-      daily: 1960-04-01 - 2024-12-30
-    monthly: 1973-01-01 - 2024-03-22
+    \b
+    Example data: meteostat stations -lat 38.9695316 -lon -77.3859479
+    72403 Dulles International Airport: 38.9333, -77.45, 311.68 ft
+    distance: 0.18 miles
+        hourly: 1973-01-01 - 2024-03-22
+        daily: 1960-04-01 - 2024-12-30
+        monthly: 1973-01-01 - 2024-03-22
 
-KJYO0 Leesburg / Sycolin: 39.078, -77.5575, 390.42 ft
-   distance: 11.53 miles
-...
+    KJYO0 Leesburg / Sycolin: 39.078, -77.5575, 390.42 ft
+    distance: 11.53 miles
+    ...
 
-\"hourly\", \"daily\", and \"monthly\" refer to the date ranges for which data are available.
+    \"hourly\", \"daily\", and \"monthly\" refer to the date ranges for which data are available.
 
     \f
     Parameters
@@ -989,18 +997,18 @@ one_year_ago: str = rd.datetime_to_datestr(one_year_ago_datetime, fmt="%Y-%m-%d"
 @click.pass_context
 def summary(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     """
-Print a table of summary statistics for the given date range. Default date range is the last 1 year time period. Sample table:
+    Print a table of summary statistics for the given date range. Default date range is the last 1 year time period. Sample table:
 
-\b
-Summary for Fairfax County, Virginia from 2023-03-01 to 2023-04-01\n
+    \b
+    Summary for Fairfax County, Virginia from 2023-03-01 to 2023-04-01\n
 
-\b
-        Avg Temp  Min temp  Max temp...
-count      32.0      32.0      32.0...
-mean       44.8      33.6      55.6...
-std         7.3       7.0      10.0...
-min        33.6      20.8      37.6...
-max        62.4      47.7      79.7...
+    \b
+            Avg Temp  Min temp  Max temp...
+    count      32.0      32.0      32.0...
+    mean       44.8      33.6      55.6...
+    std         7.3       7.0      10.0...
+    min        33.6      20.8      37.6...
+    max        62.4      47.7      79.7...
 
     \f
     Parameters
@@ -1072,28 +1080,27 @@ max        62.4      47.7      79.7...
 
 @click.group(invoke_without_command=True)
 @click.option('-c', '--command', required=True, help="enter an available command", prompt="Command or \"manual\"")
-# @click.version_option(version=VERSION)
 @click.pass_context
 def manual(ctx, command) -> None:
     """
-Access information for specific commands. If "manual" is entered with no arguments, user will be prompted for a command.
+    Access information for specific commands. If "manual" is entered with no arguments, user will be prompted for a command.
 
-\b
-Available commands:
-    coords
-    location
-    hourly-forecast
-    rain-forecast
-    alerts
-    daily-summary
-    meteostat
-    single_day
-    daily
-    hourly
-    monthly
-    normals
-    stations
-    summary
+    \b
+    Available commands:
+        coords
+        location
+        hourly-forecast
+        rain-forecast
+        alerts
+        daily-summary
+        meteostat
+        single_day
+        daily
+        hourly
+        monthly
+        normals
+        stations
+        summary
     """
 
     # "manual.json" must exist in the same directory as "weather.py".
@@ -1177,7 +1184,7 @@ def get_weather_report(period, latitude, longitude, city, state, days) -> None:
 # ==== DOWNLOAD DATA =========================================================
 
 """
-These functions delimit the extent of data downloaded from openweathermap.org. All of these functions download from that site. "meteostat" commands download data from "meteostat.net" and those download functions are included in each "meteostat" command.
+    These functions delimit the extent of data downloaded from openweathermap.org. All of these functions download from that site. "meteostat" commands download data from "meteostat.net" and those download functions are included in each "meteostat" command.
 """
 
 
@@ -1317,11 +1324,11 @@ def get_single_day_data(latitude: float, longitude: float, timeStamp: int) -> di
 
 # ==== EXTRACT NEEDED INFORMATION FROM DOWNLOADED DATA =======================
 """
-`NOTE:
-Explicit functions for current weather and forecast weather are needed
-since we need to extract a sizeable number of variables from the json
-data. For other reports, the number of variables is limited and so
-those "extractions" are handled by the click.command functions.
+    `NOTE:
+    Explicit functions for current weather and forecast weather are needed
+    since we need to extract a sizeable number of variables from the json
+    data. For other reports, the number of variables is limited and so
+    those "extractions" are handled by the click.command functions.
 """
 
 
@@ -2331,4 +2338,4 @@ def last_word() -> None:
 if __name__ == '__main__':
     cli(obj={})
 
-    # r_utils.print_documentation("C:\\Users\\rickr\\OneDrive\\Python on OneDrive\\Python CLI\\weather\\weather.py")
+    # r_utils.print_documentation("C:\\Users\\rickr\\OneDrive\\Python on OneDrive\\Python CLI\\weather\\weather.py", True)
