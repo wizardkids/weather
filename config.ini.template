@@ -1,3 +1,4 @@
+[DEFAULT]
 API_KEY = your_OpenWeatherMap.org_API_key
 DEFAULT_LAT = your_latitude
 DEFAULT_LON = your_longitude
