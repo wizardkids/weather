@@ -653,7 +653,5 @@ def summary(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     return None
 
 
-# ==== END OF METEOSTAT FUNCTIONS ============================================
-
 if __name__ == '__main__':
     pass

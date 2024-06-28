@@ -34,7 +34,6 @@ todaynaive: rd.datetime = rd.tzdatetime_to_naivedatetime(todaydatetime)
 TODAYS_DATE: str = rd.datetime_to_datestr(todaynaive, fmt="%Y-%m-%d")
 
 
-# ==== GET, EXTRACT, & PRINT CURRENT OR FORECAST WEATHER =====================
 def get_weather_report(period, latitude, longitude, city, state, days) -> None:
     """
     This function is used by both the "coords" and "location" arguments to download, extract, and print the current or forecasted weather.

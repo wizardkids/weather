@@ -499,5 +499,3 @@ meteostat_lib.meteostat.add_command(summary)
 
 if __name__ == '__main__':
     cli(obj={})
-
-    # r_utils.print_documentation("C:\\Users\\rickr\\OneDrive\\Python on OneDrive\\Python CLI\\weather\\weather.py", True)
