@@ -39,7 +39,6 @@ from meteostat_lib import (daily, hourly, monthly, normals, single_day,
                            stations, summary)
 from rich import print
 
-
 warnings.filterwarnings('ignore', category=FutureWarning)
 
 config = configparser.ConfigParser()
@@ -62,7 +61,7 @@ TODAYS_DATE: str = rd.datetime_to_datestr(todaynaive, fmt="%Y-%m-%d")
 
 # CODENOTE Using "invoke_without_command=True" allows cli() to execute if weather.py is run with no arguments. If false, then running weather.py without arguments is the same as weather.py --help.
 
-@click.group(invoke_without_command=True, epilog=f'Except \"meteostat\", using commands without arguments retrieves weather data for \"today\" at lat/lon =[{DEFAULT_LAT}, {DEFAULT_LON}] or city/state = [{DEFAULT_CITY}, {DEFAULT_STATE}]. These commands aim to provide weather information for the immediate time period. \n\n\"meteostat\" exposes 6 subcommands for accessing ranges of weather data in bulk, from a single day/time to one-day-a-month over 30 years. Bulk data are saved to file for analysis by other programs.')
+@click.group(invoke_without_command=True, epilog=f'Except \"meteostat\", using commands without arguments retrieves weather data for \"today\" at lat/lon =[DEFAULT_LAT, DEFAULT_LON] or city/state = [DEFAULT_CITY, DEFAULT_STATE]. These commands aim to provide weather information for the immediate time period. \n\n\"meteostat\" exposes 6 subcommands for accessing ranges of weather data in bulk, from a single day/time to one-day-a-month over 30 years. Bulk data are saved to file in the user\'s \"Downloads\" directory for analysis by other programs.')
 @click.version_option(version=VERSION)
 @click.pass_context
 def cli(ctx) -> None:
