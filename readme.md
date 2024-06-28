@@ -72,13 +72,14 @@ Commands:
   rain-forecast    Rain for next hour in 5-min intervals.
 
   Except "meteostat", using commands without arguments retrieves weather data
-  for "today" at lat/lon =[38.95669, -77.41006] or city/state = [Herndon,
-  Virginia]. These commands aim to provide weather information for the
-  immediate time period.
+  for "today" at lat/lon =[DEFAULT_LAT, DEFAULT_LON] or city/state =
+  [DEFAULT_CITY, DEFAULT_STATE]. These commands aim to provide weather
+  information for the immediate time period.
 
   "meteostat" exposes 6 subcommands for accessing ranges of weather data in
-  bulk, from a single day/time to one-day-a-month over 30 years. Bulk data
-  are saved to file for analysis by other programs.
+  bulk, from a single day/time to one-day-a-month over 30 years. Bulk data are
+  saved to file in the user's "Downloads" directory for analysis by other
+  programs.
 ```
 
 ## Example Usage
