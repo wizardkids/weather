@@ -14,6 +14,7 @@ import rdatetime as rd
 from icecream import ic
 from meteostat import Daily, Hourly, Monthly, Normals, Point, Stations
 from rich import print
+import utils
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -101,7 +102,7 @@ def single_day(ctx, latitude, longitude, city, state, date) -> None:
 
     # If user entered city/state, convert to latitude/longitude first.
     if city != DEFAULT_CITY and state != DEFAULT_STATE:
-        latitude, longitude = get_lat_long(city, state)
+        latitude, longitude = utils.get_lat_long(city, state)
 
     if len(date) == 10:
         date += " 12:00"
@@ -110,22 +111,21 @@ def single_day(ctx, latitude, longitude, city, state, date) -> None:
     UTCts: int = int(rd.datetime_to_ts(localdatetime))
 
     # Make sure provided date is after 01-01-1979.
-    if not is_single_day_date_ok(UTCts):
+    if not utils.is_single_day_date_ok(UTCts):
         print(f'\nProvided date \"{date}\" must be on or after \"01-01-1979\" but no later than 4 days from today.', sep="")
         exit()
 
     # Find the corresponding city/state for the provide lat/lon.
-    city, state = get_location(latitude, longitude)
+    city, state = utils.get_location(latitude, longitude)
 
     # Retrieve the data from openweathermap.org for the provided date.
-    data = get_single_day_data(latitude, longitude, UTCts)
+    data = utils.get_single_day_data(latitude, longitude, UTCts)
 
     # From the downloaded data, get the variables we want.
-    date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow = extract_single_day_weather_vars(
-        data)
+    date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow = utils.extract_single_day_weather_vars(data)
 
     # Print the final report.
-    print_single_day(city, state, latitude, longitude, date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow, alerts)
+    utils.print_single_day(city, state, latitude, longitude, date, weather, feels_like, humidity, pressure, temperature, max_temp, min_temp, visibility, wind_direction, wind_speed, sunrise, sunset, gust, uvi, dew_point, rain, snow, alerts)
 
     return None
 
@@ -170,12 +170,12 @@ def daily(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     # Get the first weather station nearby the provided latitude/longitude.
     # Use that station's latitude, longitude, and elevation to instantiate a "Point" that
     # corresponds to the weather station's location.
-    stations_df: pd.DataFrame = get_nearby_stations(latitude, longitude)
+    stations_df: pd.DataFrame = utils.get_nearby_stations(latitude, longitude)
     dulles = Point(stations_df.iloc[0, 5], stations_df.iloc[0, 6], stations_df.iloc[0, 7])
 
     weather_station = stations_df.iloc[0, 0]
 
-    city, state = get_location(latitude, longitude)
+    city, state = utils.get_location(latitude, longitude)
 
     startdatetime: rd.datetime = rd.datestr_to_tzdatetime(startdate)
     start: rd.datetime = rd.tzdatetime_to_naivedatetime(startdatetime)
@@ -188,7 +188,7 @@ def daily(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     ddata: pd.DataFrame = daily_data.fetch()
 
     # Save the raw downloaded data.
-    save_pandas_data(ddata)
+    utils.save_pandas_data(ddata)
 
     # Convert some date from metric to imperial. lambda functions avoid errors with NaN.
     ddata['tavg'] = ddata['tavg'].apply(lambda x: round((x * 9. / 5.) + 32., 1) if pd.notnull(x) else x)
@@ -272,12 +272,12 @@ def hourly(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     #     print("Please choose a date range of less than 3 days.")
     #     exit()
 
-    stations_df: pd.DataFrame = get_nearby_stations(latitude, longitude)
+    stations_df: pd.DataFrame = utils.get_nearby_stations(latitude, longitude)
 
     # Get the name of the weather station.
     weather_station = stations_df.iloc[0, 0]
 
-    city, state = get_location(stations_df.iloc[0, 5], stations_df.iloc[0, 6])
+    city, state = utils.get_location(stations_df.iloc[0, 5], stations_df.iloc[0, 6])
 
     # Get the first weather station nearby the provided latitude/longitude.
     # Use that station's latitude, longitude, and elevation to instantiate a "Point" that
@@ -287,7 +287,7 @@ def hourly(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     hdata: pd.DataFrame = hourly_data.fetch()
 
     # Save the raw downloaded data.
-    save_pandas_data(hdata)
+    utils.save_pandas_data(hdata)
 
     # Comvert some date from metric to imperial.
     hdata['temp'] = hdata['temp'].apply(lambda x: round((x * 9. / 5.) + 32., 1) if pd.notnull(x) else x)
@@ -393,13 +393,13 @@ def monthly(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     # Get the first weather station nearby the provided latitude/longitude.
     # Use that station's latitude, longitude, and elevation to instantiate a "Point" that
     # corresponds to the weather station's location.
-    stations_df: pd.DataFrame = get_nearby_stations(latitude, longitude)
+    stations_df: pd.DataFrame = utils.get_nearby_stations(latitude, longitude)
     dulles = Point(stations_df.iloc[0, 5], stations_df.iloc[0, 6], stations_df.iloc[0, 7])
 
     # Get the first weather station in stations_df. This is the closest station to lat/lon.
     weather_station = stations_df.iloc[0, 0]
 
-    city, state = get_location(stations_df.iloc[0, 5], stations_df.iloc[0, 6])
+    city, state = utils.get_location(stations_df.iloc[0, 5], stations_df.iloc[0, 6])
 
     startdatetime: rd.datetime = rd.datestr_to_tzdatetime(startdate)
     start = rd.tzdatetime_to_naivedatetime(startdatetime)
@@ -411,7 +411,7 @@ def monthly(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     mdata: pd.DataFrame = monthly.fetch()
 
     # Save the DataFrame to a CSV file in the USERPROFILE/Documents directory.
-    save_pandas_data(mdata)
+    utils.save_pandas_data(mdata)
 
     # Comvert some date from metric to imperial.
     mdata['tavg'] = mdata['tavg'].apply(lambda x: round((x * 9. / 5.) + 32., 1) if pd.notnull(x) else x)
@@ -482,7 +482,7 @@ def normals(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     # Get the first weather station nearby the provided latitude/longitude.
     # Use that station's latitude, longitude, and elevation to instantiate a "Point" that
     # corresponds to the weather station's location.
-    stations_df: pd.DataFrame = get_nearby_stations(latitude, longitude)
+    stations_df: pd.DataFrame = utils.get_nearby_stations(latitude, longitude)
     dulles = Point(stations_df.iloc[0, 5], stations_df.iloc[0, 6], stations_df.iloc[0, 7])
 
     # Get normal values from 1991 to 2020.
@@ -490,7 +490,7 @@ def normals(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     ndata: pd.DataFrame = normals.fetch()
 
     # Save the DataFrame to a CSV file in the USERPROFILE/Documents directory.
-    save_pandas_data(ndata)
+    utils.save_pandas_data(ndata)
 
     # Print normal data as means.
     print('\n[dark_orange]NORMALS CALCULATED MONTHLY FROM 1991 TO 2020[/]\n')
@@ -547,10 +547,10 @@ def stations(ctx, latitude, longitude, city, state) -> None:
 
     # If user entered city/state, convert to latitude/longitude first.
     if city != DEFAULT_CITY and state != DEFAULT_STATE:
-        latitude, longitude = get_lat_long(city, state)
+        latitude, longitude = utils.get_lat_long(city, state)
 
-    stations_df: pd.DataFrame = get_nearby_stations(latitude, longitude)
-    list_stations(stations_df)
+    stations_df: pd.DataFrame = utils.get_nearby_stations(latitude, longitude)
+    utils.list_stations(stations_df)
 
 
 todaydatetime: rd.datetime = rd.datetime.now()
@@ -602,7 +602,7 @@ def summary(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     # Get the first weather station nearby the provided latitude/longitude.
     # Use that station's latitude, longitude, and elevation to instantiate a "Point" that
     # corresponds to the weather station's location.
-    stations_df: pd.DataFrame = get_nearby_stations(latitude, longitude)
+    stations_df: pd.DataFrame = utils.get_nearby_stations(latitude, longitude)
     dulles = Point(stations_df.iloc[0, 5], stations_df.iloc[0, 6], stations_df.iloc[0, 7])
 
     # Convert the start and end dates to naive datetimes.
@@ -616,7 +616,7 @@ def summary(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     sdata: pd.DataFrame = summary_data.fetch()
 
     # Save the DataFrame to a CSV file in the USERPROFILE/Documents directory.
-    save_pandas_data(sdata)
+    utils.save_pandas_data(sdata)
 
     # Convert columns from metric to imperial and round floats, as needed.
     sdata['tavg'] = sdata['tavg'].apply(lambda x: round((x * 9. / 5.) + 32., 1) if pd.notnull(x) else x)
@@ -644,7 +644,7 @@ def summary(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     summary["Pressure"] = summary['Pressure'].round(1)
 
     # Print a header before printing the data.
-    city, state = get_location(stations_df.iloc[0, 5], stations_df.iloc[0, 6])
+    city, state = utils.get_location(stations_df.iloc[0, 5], stations_df.iloc[0, 6])
     print(f'\n[dark_orange]Summary for {city}, {state} from {startdate} to {enddate}[/]\n', sep="")
 
     # Rather than print the standard describe() dataframe, print just the data that I want.
