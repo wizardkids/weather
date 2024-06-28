@@ -1076,6 +1076,8 @@ def summary(ctx, latitude, longitude, city, state, startdate, enddate) -> None:
     return None
 
 
+# ==== END OF METEOSTAT FUNCTIONS ============================================
+
 # ==== USER MANUAL ===========================================================
 
 @click.group(invoke_without_command=True)
