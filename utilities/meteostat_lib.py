@@ -10,11 +10,11 @@ import configparser
 
 import click
 import pandas as pd
-import rdatetime as rd
+import utilities.rdatetime as rd
+import utilities.utils as utils
 from icecream import ic
 from meteostat import Daily, Hourly, Monthly, Normals, Point
 from rich import print
-import utils
 
 config = configparser.ConfigParser()
 config.read('config.ini')

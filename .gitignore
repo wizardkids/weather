@@ -1,5 +1,16 @@
+# /dist/ ignores the dist directory and its contents anywhere in the repository.
+# /dist ignores a file or directory named dist only in the root directory.
+# dist/ ignores a directory named dist and its contents only in the root directory.
+
+# The following line ignores all subdirectories of the repository root and all files in those subdirectories, except those beginning with dot.
+# /**/
+
 /__pycache__/
+/Version 0.1/
+/Version 1.0/
+*.pyc
+config.ini
 scratch.py
 data.json
+info.json
 *docstrings.json
-config.ini

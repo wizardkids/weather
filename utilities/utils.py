@@ -8,17 +8,18 @@
 """
 
 import atexit
+import configparser
 import json
 import os
 from random import randint
-import configparser
 
 import pandas as pd
-import rdatetime as rd
 import requests
+import utilities.r_utils as ru
 from icecream import ic
 from meteostat import Stations
 from rich import print
+from utilities import rdatetime as rd
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -1226,3 +1227,7 @@ def last_word() -> None:
     print(f'\n[steel_blue1]{quote}[/]')
 
     print("[yellow2]Thanks for using this app. Give somone some love![/]")
+
+
+if __name__ == "__main__":
+    pass
