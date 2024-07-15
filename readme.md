@@ -5,19 +5,19 @@ This Python script is a command-line interface (CLI) tool that retrieves weather
 ## Prerequisites
 Before running this script, you need an API key from OpenWeatherMap. You can sign up for a free account at [https://openweathermap.org/api](https://openweathermap.org/api).
 
-Change the name of the config.ini.template file to config.ini and then edit the file, inserting your API key and location data in the obvious locations.
+Change the name of the config.ini.template file to config.ini and then edit the file, inserting your API key and location data in the obvious locations in the file.
 
 ## Help
 
-The weather app provides extensive information, requiring that the CLI be somewhat robust. A manual provides complete information for each option, arguments, and commands.
+The weather app provides extensive information, requiring that the CLI be somewhat robust. A manual provides complete information for all commands, arguments, and options.
 
 `python weather.py manual`
 
-CLI help is available for the main app as well as many commands. For example:
+Help is extensive, being available for every command, including the overall app. For example:
 
 `python weather.py --help`</br>
-`python weather.py location --help`</br>
-`python weather.py daily-summary --help`
+`python weather.py location --help` --> help for the location command</br>
+`python weather.py daily-summary --help` --> help for the daily-summary
 
 ## Usage
 ```
@@ -110,3 +110,4 @@ are kept in the config.ini file.
 - [requests](https://requests.readthedocs.io/en/latest/)
 - [meteostat](https://dev.meteostat.net/python/)
 - [rich](https://rich.readthedocs.io/en/latest/)
+- [pytz](https://pypi.org/project/pytz/)

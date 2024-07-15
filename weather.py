@@ -32,7 +32,7 @@ import json
 import warnings
 
 import click
-from icecream import ic
+# from icecream import ic
 from rich import print
 from utilities import local, meteostat_lib, utils, rdatetime as rd
 from utilities.meteostat_lib import (daily, hourly, monthly, normals,

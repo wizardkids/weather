@@ -15,8 +15,8 @@ from random import randint
 
 import pandas as pd
 import requests
-import utilities.r_utils as ru
-from icecream import ic
+# import utilities.r_utils as ru
+# from icecream import ic
 from meteostat import Stations
 from rich import print
 from utilities import rdatetime as rd

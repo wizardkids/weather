@@ -12,7 +12,7 @@ import click
 import pandas as pd
 import utilities.rdatetime as rd
 import utilities.utils as utils
-from icecream import ic
+# from icecream import ic
 from meteostat import Daily, Hourly, Monthly, Normals, Point
 from rich import print
 
