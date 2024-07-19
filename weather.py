@@ -34,7 +34,9 @@ import warnings
 import click
 # from icecream import ic
 from rich import print
-from utilities import local, meteostat_lib, utils, rdatetime as rd
+from utilities import local, meteostat_lib
+from utilities import rdatetime as rd
+from utilities import utils
 from utilities.meteostat_lib import (daily, hourly, monthly, normals,
                                      single_day, stations, summary)
 
@@ -184,7 +186,3 @@ meteostat_lib.meteostat.add_command(summary)
 
 if __name__ == '__main__':
     cli(obj={})
-
-    """
-    git rm -r --cached "Version 0.1"
-    """
