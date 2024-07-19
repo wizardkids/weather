@@ -184,3 +184,7 @@ meteostat_lib.meteostat.add_command(summary)
 
 if __name__ == '__main__':
     cli(obj={})
+
+    """
+    git rm -r --cached "Version 0.1"
+    """
