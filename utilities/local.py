@@ -204,7 +204,6 @@ def rain_forecast(ctx, latitude, longitude, city, state) -> None:
         latitude, longitude = utils.get_lat_long(city, state)
 
     if utils.coord_arguments_ok(latitude, longitude):
-        print("\n[dark_orange]Expected rainfall in the next hour[/]")
         data = utils.get_rain_forecast_data(latitude, longitude)
 
         utils.print_rain_forecast(latitude, longitude, data)

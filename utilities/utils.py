@@ -768,6 +768,7 @@ def print_rain_forecast(latitude, longitude, data) -> None:
 
     # Print the date and city/state
     forecast_date: str = rd.ts_to_datestr(data['minutely'][0]['dt'])
+    print("\n[dark_orange]Expected rainfall in the next hour[/]")
     print(f'[dark_orange]{forecast_date[:10]} -- [/]', end="")
     print(f'[italic dark_orange]{city}, {state}[/]')
 
